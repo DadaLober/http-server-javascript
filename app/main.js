@@ -10,9 +10,10 @@ const server = net.createServer((socket) => {
 		server.close();
 	});
 	socket.on("data", (data) => {
-		let responseStatus;
-		const path = data.toString().split(" ")[1];
+		const headers = data.toString().split("\r\n");
+		const path = headers[0].split(" ")[1];
 		const str = path.split("/")[2];
+		const contentType = headers.find(header => header.startsWith("Content-Type:"))?.split(":")[1]?.trim();
 		// console.log(path);
 		// console.log(str);
 		if (path === `/` || path === `/echo/${str}`) {
@@ -21,8 +22,8 @@ const server = net.createServer((socket) => {
 		else {
 			responseStatus = "404 Not Found";
 		}
-		socket.write(`HTTP/1.1 ${responseStatus}\r\n\r\n`);
-		path === `/echo/${str}` ? socket.write(`Content-Type: text/plain\r\n\r\nContent-Length:${str.length}\r\n\r\n${str}`) : socket.write(`Content-Type: text/plain\r\n\r\nContent-Length: 0\r\n\r\n`);
+		path === `/echo/${str}` ? socket.write(`Content-Type: ${contentType}\r\n\r\nContent-Length:${str.length}\r\n\r\n${str}`) 
+		: socket.write(`Content-Type: text/plain\r\n\r\nContent-Length: 0\r\n\r\n`);
 	});
 });
 
