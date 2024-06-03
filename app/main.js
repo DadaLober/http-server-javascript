@@ -11,16 +11,17 @@ const server = net.createServer((socket) => {
 	});
 	socket.on("data", (data) => {
 		const path = data.toString().split(" ")[1];
-		const str = path.split("/")[2];
-		console.log(path);
-		console.log(str);
+		const str = path.split("/echo/")[1];
+		// console.log(path);
+		// console.log(str);
 		if (path === `/` || path.includes(`/echo/`)) {
 			responseStatus = "200 OK";
 		} 
 		else {
-			socket.write(`HTTP/1.1 404 Not Found\r\n\r\n Content-Type: text/plain\r\nContent-Length: 0\r\n\r\n`);
+			socket.write(`HTTP/1.1 404 Not Found\r\n\r\n`);
 		}
-		path === `/echo/${str}` ? socket.write(`HTTP/1.1 ${responseStatus}\r\n\r\n Content-Type: text/plain\r\nContent-Length:${str.length}\r\n\r\n${str}`):"";
+		path === `/echo/${str}` ? socket.write(`HTTP/1.1 ${responseStatus}\r\nContent-Type: text/plain\r\nContent-Length: ${str.length}\r\n\r\n${str}`)
+		:socket.write(`HTTP/1.1 ${responseStatus}\r\n\r\n`);
 	});
 });
 
