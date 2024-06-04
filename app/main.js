@@ -1,9 +1,21 @@
 const net = require("net");
 
-// You can use print statements as follows for debugging, they'll be visible when running tests.
-console.log("Logs from your program will appear here!");
+console.log("Logs...");
 
-// Uncomment this to pass the first stage
+const RESPONSE_OK = "200 OK";
+const RESPONSE_NOT_FOUND = "404 Not Found";
+const CONTENT_TYPE = "text/plain";
+
+
+function buildResponse(path, str) {
+
+	if (path === "/" || path.includes("/echo/")) {
+		return `HTTP/1.1 ${RESPONSE_OK}\r\nContent-Type: ${CONTENT_TYPE}\r\nContent-Length: ${str.length}\r\n\r\n${str}`;
+	} else {
+		return `HTTP/1.1 ${RESPONSE_NOT_FOUND}\r\n\r\n`;
+	}
+}
+
 const server = net.createServer((socket) => {
     socket.on("close", () => {
 		socket.end();
@@ -12,16 +24,8 @@ const server = net.createServer((socket) => {
 	socket.on("data", (data) => {
 		const path = data.toString().split(" ")[1];
 		const str = path.split("/echo/")[1];
-		// console.log(path);
-		// console.log(str);
-		if (path === `/` || path.includes(`/echo/`)) {
-			responseStatus = "200 OK";
-		} 
-		else {
-			socket.write(`HTTP/1.1 404 Not Found\r\n\r\n`);
-		}
-		path === `/echo/${str}` ? socket.write(`HTTP/1.1 ${responseStatus}\r\nContent-Type: text/plain\r\nContent-Length: ${str.length}\r\n\r\n${str}`)
-		:socket.write(`HTTP/1.1 ${responseStatus}\r\n\r\n`);
+
+		socket.write(buildResponse(path, str));
 	});
 });
 
