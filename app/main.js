@@ -11,7 +11,7 @@ const header = {};
 
 function buildResponse() {
 
-	if (header["GET"] === "/" || header["GET"].includes("/user-agent")) {
+	if (header["GET"] === "/" || header["GET"].includes("/user-agent") || header["GET"].includes("/echo")) {
 		return `HTTP/1.1 ${RESPONSE_OK}\r\nContent-Type: ${CONTENT_TYPE}\r\nContent-Length: ${header["User-Agent"].length}\r\n\r\n${header["User-Agent"]}`;
 	} else {
 		return `HTTP/1.1 ${RESPONSE_NOT_FOUND}\r\n\r\n`;
