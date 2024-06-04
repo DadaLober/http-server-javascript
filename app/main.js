@@ -17,7 +17,7 @@ function buildResponse() {
 		return `HTTP/1.1 ${RESPONSE_OK}\r\n\r\n`;
 	}
 	else if (header["GET"].includes("/echo")) {
-		return `HTTP/1.1 ${RESPONSE_OK}\r\nContent-Type: ${CONTENT_TYPE}\r\nContent-Length: ${header["GET"].split("/echo/").length}\r\n\r\n${header["GET"].split("/echo/")}`;
+		return `HTTP/1.1 ${RESPONSE_OK}\r\nContent-Type: ${CONTENT_TYPE}\r\nContent-Length: ${header["GET"].split("/echo/")[1].length}\r\n\r\n${header["GET"].split("/echo/")[1]}`;
 	}
 	else {
 		return `HTTP/1.1 ${RESPONSE_NOT_FOUND}\r\n\r\n`;
@@ -38,6 +38,7 @@ const server = net.createServer((socket) => {
 
 		console.log(path);
 		console.log(header);
+		console.log(header["GET"].split("/echo/")[1]);
 		socket.write(buildResponse());
 	});
 });
