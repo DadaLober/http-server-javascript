@@ -1,45 +1,58 @@
 const net = require("net");
 
-console.log("Logs...");
-
 const RESPONSE_OK = "200 OK";
 const RESPONSE_NOT_FOUND = "404 Not Found";
 const CONTENT_TYPE = "text/plain";
-const header = {};
 
+function parseHeaders(data) {
+	const headers = {};
+	for (const line of data.toString().split("\r\n")) {
+		const [key, value] = line.trim().split(" ");
+		if (key) {
+			headers[key.replace(/[':]/, "")] = value;
+		}	
+	}
+	return headers;
+}
 
-function buildResponse() {
+function buildResponse(statusCode, body) {
+	const contentLength = body ? body.length : 0;
+	return `HTTP/1.1 ${statusCode}\r\nContent-Type: ${CONTENT_TYPE}\r\nContent-Length: ${contentLength}\r\n\r\n${body}`;
+}
 
-	if (header["GET"].includes("/user-agent")) {
-		return `HTTP/1.1 ${RESPONSE_OK}\r\nContent-Type: ${CONTENT_TYPE}\r\nContent-Length: ${header["User-Agent"].length}\r\n\r\n${header["User-Agent"]}`;
-	}
-	else if (header["GET"] === "/") {
-		return `HTTP/1.1 ${RESPONSE_OK}\r\n\r\n`;
-	}
-	else if (header["GET"].includes("/echo")) {
-		return `HTTP/1.1 ${RESPONSE_OK}\r\nContent-Type: ${CONTENT_TYPE}\r\nContent-Length: ${header["GET"].split("/echo/")[1].length}\r\n\r\n${header["GET"].split("/echo/")[1]}`;
-	}
+function handleRequest(socket, headers) {
+	const path = headers["GET"];
+	if (path === "/") {
+		return buildResponse(RESPONSE_OK);
+	} 
+	else if (path.includes("/user-agent")) {
+		const sanitizedUserAgent = headers["User-Agent"];
+		console.log(`Received user-agent: ${sanitizedUserAgent}`);
+		return buildResponse(RESPONSE_OK, sanitizedUserAgent);
+	} 
+	else if (path.includes("/echo")) {
+		const message = path.split("/echo/")[1];
+		return buildResponse(RESPONSE_OK, message);
+	} 
 	else {
-		return `HTTP/1.1 ${RESPONSE_NOT_FOUND}\r\n\r\n`;
+		return buildResponse(RESPONSE_NOT_FOUND);
 	}
 }
 
 const server = net.createServer((socket) => {
-    socket.on("close", () => {
+	socket.on("close", () => {
 		socket.end();
-		server.close();
 	});
 	socket.on("data", (data) => {
-		const path = data.toString().split("\r\n").filter(e => e);
-		for (const i of path) {
-			const [key, value] = i.split(" ");
-			header[key.replace(":", "")] = value;
+		try {
+			const headers = parseHeaders(data);
+			console.log(headers);
+			const response = handleRequest(socket, headers);
+			socket.write(response);
+		} catch (error) {
+			console.error("Error handling request:", error);
+			socket.write(buildResponse(400, "Bad Request"));
 		}
-
-		console.log(path);
-		console.log(header);
-		console.log(header["GET"].split("/echo/")[1]);
-		socket.write(buildResponse());
 	});
 });
 
