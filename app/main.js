@@ -30,7 +30,7 @@ function handleRequest(socket, headers) {
 	else if (path.includes("/user-agent")) {
 		const sanitizedUserAgent = headers["User-Agent"];
 		console.log(`Received user-agent: ${sanitizedUserAgent}`);
-		return buildResponse(RESPONSE_OK, sanitizedUserAgent, CONTENT_TYPE_PLAIN);
+		return buildResponse(RESPONSE_OK, CONTENT_TYPE_PLAIN, sanitizedUserAgent);
 	} 
 	else if (path.includes("/echo")) {
 		const filename = path.split("/echo/")[1];
