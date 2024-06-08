@@ -35,7 +35,7 @@ function handleRequest(socket, headers) {
 	else if (path.includes("/echo")) {
 		const filename = path.split("/echo/")[1];
 		console.log(`Received echo: ${filename}`);
-		return buildResponse(RESPONSE_OK, filename, CONTENT_TYPE_PLAIN);
+		return buildResponse(RESPONSE_OK, CONTENT_TYPE_PLAIN, filename);
 	} 
 	else if (path.includes("/files")) {
 		const directory = process.argv[3];
