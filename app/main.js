@@ -1,8 +1,10 @@
+const fs = require("fs");
 const net = require("net");
 
 const RESPONSE_OK = "200 OK";
 const RESPONSE_NOT_FOUND = "404 Not Found";
-const CONTENT_TYPE = "text/plain";
+const CONTENT_TYPE_PLAIN = "text/plain";
+const CONTENT_TYPE_APP = "application/octet-stream";	
 
 function parseHeaders(data) {
 	const headers = {};
@@ -15,27 +17,40 @@ function parseHeaders(data) {
 	return headers;
 }
 
-function buildResponse(statusCode, body) {
+function buildResponse(statusCode, contentType, body) {
 	const contentLength = body ? body.length : 0;
-	return `HTTP/1.1 ${statusCode}\r\nContent-Type: ${CONTENT_TYPE}\r\nContent-Length: ${contentLength}\r\n\r\n${body}`;
+	return `HTTP/1.1 ${statusCode}\r\nContent-Type: ${contentType}\r\nContent-Length: ${contentLength}\r\n\r\n${body}`;
 }
 
 function handleRequest(socket, headers) {
 	const path = headers["GET"];
 	if (path === "/") {
-		return buildResponse(RESPONSE_OK);
+		return buildResponse(RESPONSE_OK, CONTENT_TYPE_PLAIN);
 	} 
 	else if (path.includes("/user-agent")) {
 		const sanitizedUserAgent = headers["User-Agent"];
 		console.log(`Received user-agent: ${sanitizedUserAgent}`);
-		return buildResponse(RESPONSE_OK, sanitizedUserAgent);
+		return buildResponse(RESPONSE_OK, sanitizedUserAgent, CONTENT_TYPE_PLAIN);
 	} 
 	else if (path.includes("/echo")) {
-		const message = path.split("/echo/")[1];
-		return buildResponse(RESPONSE_OK, message);
+		const filename = path.split("/echo/")[1];
+		console.log(`Received echo: ${filename}`);
+		return buildResponse(RESPONSE_OK, filename, CONTENT_TYPE_PLAIN);
 	} 
+	else if (path.includes("/files")) {
+		const directory = process.argv[3];
+		const filename = path.split("/files/")[1];
+		if (fs.existsSync(`${directory}/${filename}`)){
+			console.log(`Received file name: ${filename}, directory: ${directory}`);
+			const content = fs.readFileSync(`${directory}/${filename}`).toString();
+			return buildResponse(RESPONSE_OK, CONTENT_TYPE_APP, content);
+		}
+		else {
+			return buildResponse(RESPONSE_NOT_FOUND, CONTENT_TYPE_PLAIN);
+		}
+	}
 	else {
-		return buildResponse(RESPONSE_NOT_FOUND);
+		return buildResponse(RESPONSE_NOT_FOUND, CONTENT_TYPE_PLAIN);	
 	}
 }
 
