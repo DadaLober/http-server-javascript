@@ -6,52 +6,71 @@ const RESPONSE_NOT_FOUND = "404 Not Found";
 const CONTENT_TYPE_PLAIN = "text/plain";
 const CONTENT_TYPE_APP = "application/octet-stream";	
 
-function parseHeaders(data) {
-	const headers = {};
-	for (const line of data.toString().split("\r\n")) {
-		const [key, value] = line.trim().split(" ");
-		if (key) {
-			headers[key.replace(/[':]/, "")] = value;
-		}	
-	}
-	return headers;
+const routes = {
+    '/': () => buildResponse(RESPONSE_OK, CONTENT_TYPE_PLAIN),
+    '/user-agent': (headers) => handleUserAgent(headers),
+    '/echo': (headers, path) => handleEcho(path),
+    '/files': (headers, path) => handleFiles(path)
+};
+
+function handleUserAgent(headers) {
+	if (!headers || typeof headers["User-Agent"] !== 'string') {
+        throw new Error('Invalid User-Agent header');
+    }
+    const sanitizedUserAgent = headers["User-Agent"];
+    console.log(`Received user-agent: ${sanitizedUserAgent}`);
+    return buildResponse(RESPONSE_OK, CONTENT_TYPE_PLAIN, sanitizedUserAgent);
 }
 
-function buildResponse(statusCode, contentType, body) {
-	const contentLength = body ? body.length : 0;
-	return `HTTP/1.1 ${statusCode}\r\nContent-Type: ${contentType}\r\nContent-Length: ${contentLength}\r\n\r\n${body}`;
+function handleEcho(path) {
+    const filename = path.split("/echo/")[1];
+    console.log(`Received echo: ${filename}`);
+    return buildResponse(RESPONSE_OK, CONTENT_TYPE_PLAIN, filename);
+}
+
+function handleFiles(path) {
+    const directory = process.argv[3];
+    const filename = path.split("/files/")[1];
+    const filePath = `${directory}/${filename}`;
+    if (fs.existsSync(filePath)) {
+        log(`Received file name: ${filename}, directory: ${directory}`);
+        const content = fs.readFileSync(filePath).toString();
+        return buildResponse(RESPONSE_OK, CONTENT_TYPE_APP, content);
+    } else {
+        return buildResponse(RESPONSE_NOT_FOUND, CONTENT_TYPE_PLAIN);
+    }
 }
 
 function handleRequest(socket, headers) {
-	const path = headers["GET"];
-	if (path === "/") {
-		return buildResponse(RESPONSE_OK, CONTENT_TYPE_PLAIN);
-	} 
-	else if (path.includes("/user-agent")) {
-		const sanitizedUserAgent = headers["User-Agent"];
-		console.log(`Received user-agent: ${sanitizedUserAgent}`);
-		return buildResponse(RESPONSE_OK, CONTENT_TYPE_PLAIN, sanitizedUserAgent);
-	} 
-	else if (path.includes("/echo")) {
-		const filename = path.split("/echo/")[1];
-		console.log(`Received echo: ${filename}`);
-		return buildResponse(RESPONSE_OK, CONTENT_TYPE_PLAIN, filename);
-	} 
-	else if (path.includes("/files")) {
-		const directory = process.argv[3];
-		const filename = path.split("/files/")[1];
-		if (fs.existsSync(`${directory}/${filename}`)){
-			console.log(`Received file name: ${filename}, directory: ${directory}`);
-			const content = fs.readFileSync(`${directory}/${filename}`).toString();
-			return buildResponse(RESPONSE_OK, CONTENT_TYPE_APP, content);
-		}
-		else {
-			return buildResponse(RESPONSE_NOT_FOUND, CONTENT_TYPE_PLAIN);
-		}
+    if (!headers || typeof headers["GET"] !== 'string') {
+        return buildResponse(RESPONSE_BAD_REQUEST, CONTENT_TYPE_PLAIN);
+    }
+
+    const path = headers["GET"];
+    const routeHandler = routes[path] || routes[path.split('/')[1]];
+
+    if (routeHandler) {
+        try {
+            return routeHandler(headers, path);
+        } catch (error) {
+            log(`Error during request handling: ${error.message}`);
+            return buildResponse(RESPONSE_INTERNAL_SERVER_ERROR, CONTENT_TYPE_PLAIN);
+        }
+    } else {
+        return buildResponse(RESPONSE_NOT_FOUND, CONTENT_TYPE_PLAIN);
+    }
+}
+
+function parseHeaders(data) {
+	if (!data || data.length === 0) {
+		return console.error("No data provided");
 	}
-	else {
-		return buildResponse(RESPONSE_NOT_FOUND, CONTENT_TYPE_PLAIN);	
+	const headers = {};
+	for (const line of data.toString().split("\r\n")) {
+		const [key, value] = line.trim().split(" ");
+		headers[key.replace(/[':]/, "")] = value;	
 	}
+	return headers;
 }
 
 const server = net.createServer((socket) => {
