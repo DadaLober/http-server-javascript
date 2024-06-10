@@ -42,12 +42,11 @@ const server = net.createServer((socket) => {
 	socket.on("data", (data) => {
 		try {
 			const headers = parseHeaders(data);
-			console.log(headers);
 			const response = handleRequest(socket, headers);
 			socket.write(response);
 		} catch (error) {
 			console.error("Error handling request:", error);
-			socket.write(buildResponse(400, "Bad Request"));
+			socket.write(buildResponse(RESPONSE_NOT_FOUND, CONTENT_TYPE_PLAIN, error));
 		}
 	});
 });
