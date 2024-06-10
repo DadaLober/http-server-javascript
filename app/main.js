@@ -6,6 +6,7 @@ const RESPONSE_NOT_FOUND = "404 Not Found";
 const CONTENT_TYPE_PLAIN = "text/plain";
 const CONTENT_TYPE_APP = "application/octet-stream";	
 
+// Define routes and their handlers
 const routes = {
     '/': () => buildResponse(RESPONSE_OK, CONTENT_TYPE_PLAIN),
     '/user-agent': (headers) => handleUserAgent(headers),
@@ -13,56 +14,8 @@ const routes = {
     '/files': (headers, path) => handleFiles(path)
 };
 
-function handleUserAgent(headers) {
-	if (!headers || typeof headers["User-Agent"] !== 'string') {
-        throw new Error('Invalid User-Agent header');
-    }
-    const sanitizedUserAgent = headers["User-Agent"];
-    console.log(`Received user-agent: ${sanitizedUserAgent}`);
-    return buildResponse(RESPONSE_OK, CONTENT_TYPE_PLAIN, sanitizedUserAgent);
-}
-
-function handleEcho(path) {
-    const filename = path.split("/echo/")[1];
-    console.log(`Received echo: ${filename}`);
-    return buildResponse(RESPONSE_OK, CONTENT_TYPE_PLAIN, filename);
-}
-
-function handleFiles(path) {
-    const directory = process.argv[3];
-    const filename = path.split("/files/")[1];
-    const filePath = `${directory}/${filename}`;
-    if (fs.existsSync(filePath)) {
-        log(`Received file name: ${filename}, directory: ${directory}`);
-        const content = fs.readFileSync(filePath).toString();
-        return buildResponse(RESPONSE_OK, CONTENT_TYPE_APP, content);
-    } else {
-        return buildResponse(RESPONSE_NOT_FOUND, CONTENT_TYPE_PLAIN);
-    }
-}
-
-function handleRequest(socket, headers) {
-    if (!headers || typeof headers["GET"] !== 'string') {
-        return buildResponse(RESPONSE_BAD_REQUEST, CONTENT_TYPE_PLAIN);
-    }
-
-    const path = headers["GET"];
-    const routeHandler = routes[path] || routes[path.split('/')[1]];
-
-    if (routeHandler) {
-        try {
-            return routeHandler(headers, path);
-        } catch (error) {
-            log(`Error during request handling: ${error.message}`);
-            return buildResponse(RESPONSE_INTERNAL_SERVER_ERROR, CONTENT_TYPE_PLAIN);
-        }
-    } else {
-        return buildResponse(RESPONSE_NOT_FOUND, CONTENT_TYPE_PLAIN);
-    }
-}
-
 function parseHeaders(data) {
-	if (!data || data.length === 0) {
+	if (!data || data === null || data.length === 0) {
 		return console.error("No data provided");
 	}
 	const headers = {};
@@ -71,6 +24,15 @@ function parseHeaders(data) {
 		headers[key.replace(/[':]/, "")] = value;	
 	}
 	return headers;
+}
+
+function buildResponse(statusCode, contentType, body = "") {
+	try {
+	const contentLength = body.length;
+	return `HTTP/1.1 ${statusCode}\r\nContent-Type: ${contentType}\r\nContent-Length: ${contentLength}\r\n\r\n${body}`;
+	} catch (error) {
+		return console.error("Error building response:", error);
+	}
 }
 
 const server = net.createServer((socket) => {
