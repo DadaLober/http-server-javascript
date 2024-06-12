@@ -26,7 +26,7 @@ function handleRequest(headers) {
 function handleFileRequest(filename, directory) {
     if (fs.existsSync(`${directory}/${filename}`)) {
         const content = fs.readFileSync(`${directory}/${filename}`).toString();
-        return `HTTP/1.1 ${statusCode}\r\nContent-Type: ${RESPONSE_OK}\r\nContent-Length: ${content.length}\r\n\r\n${content}\r\n`;
+        return `HTTP/1.1 ${RESPONSE_OK}\r\nContent-Type: ${CONTENT_TYPE.APP}\r\nContent-Length: ${content.length}\r\n\r\n${content}\r\n`;
     } else {
         return `HTTP/1.1 ${RESPONSE_NOT_FOUND}\r\n\r\n`;
 }
