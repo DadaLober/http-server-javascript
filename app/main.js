@@ -10,7 +10,7 @@ const routes = {
 	'/': () => buildResponse(RESPONSE_OK, CONTENT_TYPE_PLAIN),
 	'/echo': (directory, path, headers, body) => buildResponse(RESPONSE_OK, CONTENT_TYPE_PLAIN, body),
 	'/user-agent': (directory, path, headers, body) => buildResponse(RESPONSE_OK, CONTENT_TYPE_PLAIN, headers["User-Agent"]),
-	'/files': (directory, path, headers, body) => handleFileRequest(RESPONSE_OK, CONTENT_TYPE_APP, path, directory),
+	'/files': (directory, path, headers, body) => handleFileRequest(RESPONSE_OK, CONTENT_TYPE_APP, body, directory),
 };
 
 function handleRequest(headers) {
