@@ -8,23 +8,24 @@ const CONTENT_TYPE_APP = "application/octet-stream";
 
 const routes = {
 	'/': () => buildResponse(RESPONSE_OK, CONTENT_TYPE_PLAIN),
-	'/echo': (body) => buildResponse(RESPONSE_OK, CONTENT_TYPE_PLAIN, body),
-	'/user-agent': (body, headers) => buildResponse(RESPONSE_OK, CONTENT_TYPE_PLAIN, headers["User-Agent"]),
-	'/files': (path, body) => handleFileRequest(path, body),
+	'/echo': (directory, path, headers, body) => buildResponse(RESPONSE_OK, CONTENT_TYPE_PLAIN, body),
+	'/user-agent': (directory, path, headers, body) => buildResponse(RESPONSE_OK, CONTENT_TYPE_PLAIN, headers["User-Agent"]),
+	'/files': (directory, path, headers, body) => handleFileRequest(RESPONSE_OK, CONTENT_TYPE_APP, path, directory),
 };
 
 function handleRequest(headers) {
 	const [path, body] = headers["GET"].split("/").slice(1);
-	console.log(path, body);
+	const directory = process.argv[3];
+	console.log(path, body, directory);
 	const handler = routes[`/${path}`];
-	const response = handler ? handler(body, headers) : buildResponse(RESPONSE_NOT_FOUND, CONTENT_TYPE_PLAIN);
+	const response = handler ? handler(directory, path, headers, body) : buildResponse(RESPONSE_NOT_FOUND, CONTENT_TYPE_PLAIN);
 	return response;
 }
 
-function handleFileRequest(directory, filename) {
+function handleFileRequest(statusCode, contentType, filename, directory) {
     if (fs.existsSync(`${directory}/${filename}`)) {
         const content = fs.readFileSync(`${directory}/${filename}`).toString();
-        return `HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: ${content.length}\r\n\r\n${content}\r\n`;
+        return `HTTP/1.1 ${statusCode}\r\nContent-Type: ${contentType}\r\nContent-Length: ${content.length}\r\n\r\n${content}\r\n`;
     } else {
         return "HTTP/1.1 404 Not Found\r\n\r\n";
 }
