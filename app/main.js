@@ -3,31 +3,32 @@ const net = require("net");
 
 const RESPONSE_OK = "200 OK";
 const RESPONSE_NOT_FOUND = "404 Not Found";
-const CONTENT_TYPE_PLAIN = "text/plain";
-const CONTENT_TYPE_APP = "application/octet-stream";
+const CONTENT_TYPE = {
+	PLAIN : "text/plain",
+	APP : "application/octet-stream",
+};
 
 const routes = {
-	'/': () => buildResponse(RESPONSE_OK, CONTENT_TYPE_PLAIN),
-	'/echo': (directory, path, headers, body) => buildResponse(RESPONSE_OK, CONTENT_TYPE_PLAIN, body),
-	'/user-agent': (directory, path, headers, body) => buildResponse(RESPONSE_OK, CONTENT_TYPE_PLAIN, headers["User-Agent"]),
-	'/files': (directory, path, headers, body) => handleFileRequest(RESPONSE_OK, CONTENT_TYPE_APP, body, directory),
+	'/': () => buildResponse(RESPONSE_OK, CONTENT_TYPE.PLAIN),
+	'/echo': (directory, path, headers, body) => buildResponse(RESPONSE_OK, CONTENT_TYPE.PLAIN, body),
+	'/user-agent': (directory, path, headers, body) => buildResponse(RESPONSE_OK, CONTENT_TYPE.PLAIN, headers["User-Agent"]),
+	'/files': (directory, path, headers, body) => handleFileRequest(body, directory),
 };
 
 function handleRequest(headers) {
 	const [path, body] = headers["GET"].split("/").slice(1);
 	const directory = process.argv[3];
-	console.log(path, body, directory);
 	const handler = routes[`/${path}`];
-	const response = handler ? handler(directory, path, headers, body) : buildResponse(RESPONSE_NOT_FOUND, CONTENT_TYPE_PLAIN);
+	const response = handler ? handler(directory, path, headers, body) : buildResponse(RESPONSE_NOT_FOUND, CONTENT_TYPE.PLAIN);
 	return response;
 }
 
-function handleFileRequest(statusCode, contentType, filename, directory) {
+function handleFileRequest(filename, directory) {
     if (fs.existsSync(`${directory}/${filename}`)) {
         const content = fs.readFileSync(`${directory}/${filename}`).toString();
-        return `HTTP/1.1 ${statusCode}\r\nContent-Type: ${contentType}\r\nContent-Length: ${content.length}\r\n\r\n${content}\r\n`;
+        return `HTTP/1.1 ${statusCode}\r\nContent-Type: ${RESPONSE_OK}\r\nContent-Length: ${content.length}\r\n\r\n${content}\r\n`;
     } else {
-        return "HTTP/1.1 404 Not Found\r\n\r\n";
+        return `HTTP/1.1 ${RESPONSE_NOT_FOUND}\r\n\r\n`;
 }
 }
 
