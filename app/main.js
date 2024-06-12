@@ -9,9 +9,9 @@ const CONTENT_TYPE_APP = "application/octet-stream";
 // Define routes and their handlers
 const routes = {
     '/': () => buildResponse(RESPONSE_OK, CONTENT_TYPE_PLAIN),
-    '/user-agent': (headers) => handleUserAgent(headers),
-    '/echo': (headers, path) => handleEcho(path),
-    '/files': (headers, path) => handleFiles(path)
+    '/user-agent': (headers) => buildResponse(RESPONSE_OK, CONTENT_TYPE_PLAIN, headers['user-agent']),
+    '/echo': (headers, path) => buildResponse(RESPONSE_OK, CONTENT_TYPE_PLAIN, path),
+    '/files': (headers, path) => buildResponse(RESPONSE_OK, CONTENT_TYPE_APP, fs.readFileSync(path)),
 };
 
 function parseHeaders(data) {
@@ -35,6 +35,16 @@ function buildResponse(statusCode, contentType, body = "") {
 	}
 }
 
+function handleRequest(socket, headers) {
+	const path = headers['path'];
+	const route = routes[path];
+	if (route) {
+		return route(headers, path);
+	} else {
+		return buildResponse(RESPONSE_NOT_FOUND, CONTENT_TYPE_PLAIN);
+	}
+}
+
 const server = net.createServer((socket) => {
 	socket.on("close", () => {
 		socket.end();
@@ -42,11 +52,12 @@ const server = net.createServer((socket) => {
 	socket.on("data", (data) => {
 		try {
 			const headers = parseHeaders(data);
+			console.log("Request headers:", headers);
 			const response = handleRequest(socket, headers);
 			socket.write(response);
 		} catch (error) {
 			console.error("Error handling request:", error);
-			socket.write(buildResponse(RESPONSE_NOT_FOUND, CONTENT_TYPE_PLAIN, error));
+			socket.end();
 		}
 	});
 });
