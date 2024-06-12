@@ -10,7 +10,7 @@ const routes = {
 	'/': () => buildResponse(RESPONSE_OK, CONTENT_TYPE_PLAIN),
 	'/echo': (body) => buildResponse(RESPONSE_OK, CONTENT_TYPE_PLAIN, body),
 	'/user-agent': (body, headers) => buildResponse(RESPONSE_OK, CONTENT_TYPE_PLAIN, headers["User-Agent"]),
-	'/files': (body) => buildResponse(RESPONSE_OK, CONTENT_TYPE_APP, fs.readFileSync(body).toString()),
+	'/files': (path, body) => handleFileRequest(path, body, socket),
 };
 
 function handleRequest(headers) {
@@ -19,6 +19,14 @@ function handleRequest(headers) {
 	const handler = routes[`/${path}`];
 	const response = handler ? handler(body, headers) : buildResponse(RESPONSE_NOT_FOUND, CONTENT_TYPE_PLAIN);
 	return response;
+}
+
+function handleFileRequest(directory, filename) {
+    if (fs.existsSync(`${directory}/${filename}`)) {
+        const content = fs.readFileSync(`${directory}/${filename}`).toString();
+        return `HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: ${content.length}\r\n\r\n${content}\r\n`;
+    } else {
+        return "HTTP/1.1 404 Not Found\r\n\r\n";
 }
 
 function parseHeaders(data) {
