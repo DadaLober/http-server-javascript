@@ -10,7 +10,7 @@ const routes = {
 	'/': () => buildResponse(RESPONSE_OK, CONTENT_TYPE_PLAIN),
 	'/echo': (body) => buildResponse(RESPONSE_OK, CONTENT_TYPE_PLAIN, body),
 	'/user-agent': (body, headers) => buildResponse(RESPONSE_OK, CONTENT_TYPE_PLAIN, headers["User-Agent"]),
-	'/files': (path, body) => handleFileRequest(path, body, socket),
+	'/files': (path, body) => handleFileRequest(path, body),
 };
 
 function handleRequest(headers) {
@@ -27,6 +27,7 @@ function handleFileRequest(directory, filename) {
         return `HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: ${content.length}\r\n\r\n${content}\r\n`;
     } else {
         return "HTTP/1.1 404 Not Found\r\n\r\n";
+}
 }
 
 function parseHeaders(data) {
