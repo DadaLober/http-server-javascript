@@ -1,4 +1,4 @@
-import { parseHeaders, handleRequest } from "./utils.js";
+import { parseHeaders, handleRequests } from "./utils.js";
 import net from "net";
 
 const server = net.createServer((socket) => {
@@ -7,10 +7,11 @@ const server = net.createServer((socket) => {
 	});
 	socket.on("data", (data) => {
 		try {
-			const headers = parseHeaders(data);
-			const response = handleRequest(headers);
+			const [requestArray, headers, body] = parseHeaders(data);
+			const response = handleRequests(requestArray, headers, body);
 			socket.write(response);
 			socket.end();
+			return
 		} catch (error) {
 			console.error("Error handling request:", error);
 			socket.end();

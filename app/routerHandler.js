@@ -1,9 +1,18 @@
 import { RESPONSE, CONTENT_TYPE } from "./utils.js";
 import fs from "fs";
 
-export function handleFilesRequest(directory, file) {
+export function handleRequests(directory, file) {
 	const content = fs.readFileSync(`${directory}/${file}`).toString();
 	return `HTTP/1.1 ${RESPONSE.OK}\r\n-Type: ${CONTENT_TYPE.APP}\r\n-Length: ${content.length}\r\n\r\n${content}\r\n`;
+}
+
+export function handlePOSTRequests(directory, file, body) {
+	try {
+		fs.writeFileSync(`${directory}/${file}`, body);
+		return `HTTP/1.1 ${RESPONSE.CREATED}\r\n\r\n`;
+	} catch (error) {
+		console.error("Error writing file:", error);
+	}
 }
 
 export function handleUserAgentRequest(headers) {
