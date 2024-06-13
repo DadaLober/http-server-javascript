@@ -1,0 +1,10 @@
+import { RESPONSE, CONTENT_TYPE } from "./utils.js";
+import { handleEchoRequest, handleUserAgentRequest, handleFilesRequest, handleDefaultRequest } from "./routerHandler.js";
+
+export const routes = {
+	'/': () => handleDefaultRequest(RESPONSE.OK, CONTENT_TYPE.PLAIN),
+	'/404': () => handleDefaultRequest(RESPONSE.NOT_FOUND, CONTENT_TYPE.PLAIN),
+	'/echo': (directory, path, headers, body) => handleEchoRequest(body),
+	'/user-agent': (directory, path, headers) => handleUserAgentRequest(headers["User-Agent"]),
+	'/files': (directory, path, headers, file) => handleFilesRequest(directory, file),
+};

@@ -4,12 +4,13 @@
     "description": "Build your own HTTP-Server challenge, from CodeCrafters",
     "main": "main.js",
     "scripts": {
-        "dev": "node app/main.js"
+        "dev": "node app/main.js ./tmp"
     },
     "keywords": [
         "build-your-own-x"
     ],
     "author": "",
     "license": "MIT",
-    "dependencies": {}
+    "dependencies": {},
+    "type": "module"
 }
