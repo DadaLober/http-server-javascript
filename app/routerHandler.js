@@ -7,8 +7,10 @@ export function handleRequests(directory, file) {
 }
 
 export function handlePOSTRequests(directory, file, body) {
+	const DIR = directory + '/' + file;
+	console.log(DIR);
 	try {
-		fs.writeFileSync(`${directory}/${file}`, body);
+		fs.writeFileSync(DIR, body);
 		return `HTTP/1.1 ${RESPONSE.CREATED}\r\n\r\n`;
 	} catch (error) {
 		console.error("Error writing file:", error);
