@@ -3,7 +3,7 @@ import fs from "fs";
 
 export function handleGETRequests(directory, file) {
 	const content = fs.readFileSync(`${directory}/${file}`).toString();
-	return `HTTP/1.1 ${RESPONSE.OK}\r\n-Type: ${CONTENT_TYPE.APP}\r\n-Length: ${content.length}\r\n\r\n${content}\r\n`;
+	return `HTTP/1.1 ${RESPONSE.OK}\r\nContent-Type: ${CONTENT_TYPE.APP}\r\nContent-Length: ${content.length}\r\n\r\n${content}\r\n`;
 }
 
 export function handlePOSTRequests(directory, file, body) {
