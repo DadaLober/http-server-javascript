@@ -17,7 +17,7 @@ export function parseHeaders(data) {
 	const body = lines.pop();
 	lines.forEach(element => {
 		const [key, value] = element.split(" ");
-		headers[key] = value;
+		headers[key.replace(/[':]/, "")] = value;
 	});
 	const requestArray = requestLine.split(" ");
 	return [requestArray, headers, body];

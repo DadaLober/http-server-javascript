@@ -20,7 +20,7 @@ export function handlePOSTRequests(directory, file, body) {
 }
 
 export function handleUserAgentRequest(headers) {
-	return `HTTP/1.1 ${RESPONSE.OK}\r\nContent-Type: ${CONTENT_TYPE.PLAIN}\r\nContent-Length: ${headers.length}\r\n\r\n${headers}\r\n`;
+	return `HTTP/1.1 ${RESPONSE.OK}\r\nContent-Type: ${CONTENT_TYPE.PLAIN}\r\nContent-Length: ${headers["User-Agent"].length}\r\n\r\n${headers["User-Agent"]}\r\n`;
 } 
 
 export function handleEchoRequest(body) {
