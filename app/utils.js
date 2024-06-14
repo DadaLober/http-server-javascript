@@ -27,6 +27,6 @@ export function handleRequests(requestLine, headers, body) {
 		const file = requestLine[1].split("/")[2];
 		const directory = process.argv[3];
 		const handler = routes[`/${path}`];
-		console.log(directory, path, headers, file, requestLine, body);
+		// console.log(directory, path, headers, file, requestLine, body);
 		return handler ? handler(directory, path, headers, file, requestLine, body) : routes["/404"]();
 }
