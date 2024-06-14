@@ -1,14 +1,13 @@
 import { RESPONSE, CONTENT_TYPE } from "./utils.js";
 import fs from "fs";
 
-export function handleRequests(directory, file) {
+export function handleGETRequests(directory, file) {
 	const content = fs.readFileSync(`${directory}/${file}`).toString();
 	return `HTTP/1.1 ${RESPONSE.OK}\r\n-Type: ${CONTENT_TYPE.APP}\r\n-Length: ${content.length}\r\n\r\n${content}\r\n`;
 }
 
 export function handlePOSTRequests(directory, file, body) {
 	const DIR = directory + '/' + file;
-	console.log(DIR);
 	try {
 		fs.writeFileSync(DIR, body);
 		return `HTTP/1.1 ${RESPONSE.CREATED}\r\n\r\n`;

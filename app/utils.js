@@ -23,21 +23,10 @@ export function parseHeaders(data) {
 	return [requestArray, headers, body];
 }
 export function handleRequests(requestLine, headers, body) {
-	if (requestLine.includes('POST')) {
 		const path = requestLine[1].split("/")[1];
 		const file = requestLine[1].split("/")[2];
 		const directory = process.argv[3];
 		const handler = routes[`/${path}`];
-		console.log(directory, path, headers, file, body);
+		console.log(directory, path, headers, file, requestLine, body);
 		return handler ? handler(directory, path, headers, file, requestLine, body) : routes["/404"]();
-	}
-	else if (requestLine.includes('GET')) {
-		const [path, body] = headers["GET"].split("/").slice(1);
-		const directory = process.argv[2];
-		const handler = routes[`/${path}`];
-		return handler ? handler(directory, path, headers, body) : routes["/404"]();
-	}
-	else {
-		return routes["/404"]();
-	}
 }
