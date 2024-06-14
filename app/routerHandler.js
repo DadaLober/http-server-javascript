@@ -2,6 +2,9 @@ import { RESPONSE, CONTENT_TYPE } from "./utils.js";
 import fs from "fs";
 
 export function handleGETRequests(directory, file) {
+	if (!fs.existsSync(`${directory}/${file}`)) {
+		return `HTTP/1.1 ${RESPONSE.NOT_FOUND}\r\n\r\n`;
+	}
 	const content = fs.readFileSync(`${directory}/${file}`).toString();
 	return `HTTP/1.1 ${RESPONSE.OK}\r\nContent-Type: ${CONTENT_TYPE.APP}\r\nContent-Length: ${content.length}\r\n\r\n${content}\r\n`;
 }
