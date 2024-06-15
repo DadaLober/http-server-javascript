@@ -6,11 +6,15 @@ export const RESPONSE = {
 	CREATED : "HTTP/1.1 201 Created\r\n\r\n",
     NOT_FOUND : "HTTP/1.1 404 Not Found\r\n\r\n",
 };
+
 export const CONTENT_TYPE = {
 	PLAIN : "Content-Type: text/plain\r\n",
 	APP : "Content-Type: application/octet-stream\r\n",
 };
 
+export const ENCODING = {
+	GZIP : "Content-Encoding: gzip\r\n",
+};
 /**
  * @param {Buffer|string}
  * @returns {Object} parsedResult - An object containing headers info.

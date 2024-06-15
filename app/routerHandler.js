@@ -1,4 +1,4 @@
-import { RESPONSE, CONTENT_TYPE } from "./utils.js";
+import { RESPONSE, CONTENT_TYPE, ENCODING } from "./utils.js";
 import fs from "fs";
 
 
@@ -26,7 +26,10 @@ export function handleFilePOSTRequests(parsedResult) {
 
 export function handleUserAgentRequest(parsedResult) {
 	const body = parsedResult.headers["User-Agent"];
-	return `${RESPONSE.OK}${CONTENT_TYPE.PLAIN}Content-Length: ${body.length}\r\n\r\n${body}\r\n`;
+	if (!parsedResult.headers["Accept-Encoding"] === "gzip") {
+		return `${RESPONSE.OK}${CONTENT_TYPE.PLAIN}	Content-Length: ${body.length}\r\n\r\n${body}\r\n`;
+	}
+	return `${RESPONSE.OK}${ENCODING.GZIP}${CONTENT_TYPE.PLAIN}	Content-Length: ${body.length}\r\n\r\n${body}\r\n`;
 } 
 
 export function handleEchoRequest(parsedResult) {
