@@ -2,13 +2,13 @@ import {routes} from "./router.js";
 import process from "process";
 
 export const RESPONSE = {
-    OK : "200 OK",
-	CREATED : "201 Created",
-    NOT_FOUND : "404 Not Found",
+    OK : "HTTP/1.1 200 OK\r\n",
+	CREATED : "HTTP/1.1 201 Created\r\n\r\n",
+    NOT_FOUND : "HTTP/1.1 404 Not Found\r\n\r\n",
 };
 export const CONTENT_TYPE = {
-	PLAIN : "text/plain",
-	APP : "application/octet-stream",
+	PLAIN : "Content-Type: text/plain\r\n",
+	APP : "Content-Type: application/octet-stream\r\n",
 };
 
 /**

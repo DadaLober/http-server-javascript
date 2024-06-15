@@ -6,6 +6,5 @@ export const routes = {
 	'/404': () => handleDefaultRequest(RESPONSE.NOT_FOUND, CONTENT_TYPE.PLAIN),
 	'/echo': (parsedResult) => handleEchoRequest(parsedResult),
 	'/user-agent': (parsedResult) => handleUserAgentRequest(parsedResult),
-	'/files': (parsedResult) => parsedResult.METHOD === "POST"
-	? handleFilePOSTRequests(parsedResult) : handleFileGETRequests(parsedResult),
+	'/files': (parsedResult) => parsedResult.METHOD === "POST" ? handleFilePOSTRequests(parsedResult) : handleFileGETRequests(parsedResult),
 };
