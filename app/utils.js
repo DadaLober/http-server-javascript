@@ -13,20 +13,27 @@ export const CONTENT_TYPE = {
 export function parseHeaders(data) {
 	const headers = {};
 	const lines = data.toString().split("\r\n");
-	const requestLine = lines.shift();
+
+	// Extract request line and body
+	const rawRequestLine = lines.shift();
+	const requestLine = rawRequestLine.split(" ");
 	const body = lines.pop();
+
+	// Create headers object
 	lines.forEach(element => {
 		const [key, value] = element.split(" ");
 		headers[key.replace(/[':]/, "")] = value;
 	});
-	const requestArray = requestLine.split(" ");
-	return [requestArray, headers, body];
+
+	const response = {requestLine, headers, body};
+	return response;
 }
-export function handleRequests(requestLine, headers, body) {
-		const path = requestLine[1].split("/")[1];
-		const file = requestLine[1].split("/")[2];
-		const directory = process.argv[3];
-		const handler = routes[`/${path}`];
-		// console.log(directory, path, headers, file, requestLine, body);
-		return handler ? handler(directory, path, headers, file, requestLine, body) : routes["/404"]();
+export function handleRequests(parsedResult) {
+	const [_, path, filename] = parsedResult.requestLine[1].split("/");
+
+	// handle routes
+	// console.log(parsedResult, path, filename);
+	const handler = routes[`/${path}`];
+	const response = handler ? handler(parsedResult, path, filename) : routes["/404"]();
+	return response;
 }
