@@ -1,4 +1,4 @@
-import { parseHeaders, handleRequests } from "./utils.js";
+import { parseHeaders, handleRoutes } from "./utils.js";
 import net from "net";
 
 const handleSocketClose = (socket) => {
@@ -8,7 +8,7 @@ const handleSocketClose = (socket) => {
 const handleSocketData = (socket, data) => {
 	try {
 		const parsedResult = parseHeaders(data);
-		const response = handleRequests(parsedResult);
+		const response = handleRoutes(parsedResult);
 		socket.write(response);
 		socket.end();
 	} catch (error) {

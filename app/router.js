@@ -4,8 +4,8 @@ import { handleEchoRequest, handleUserAgentRequest, handleFileGETRequests, handl
 export const routes = {
 	'/': () => handleDefaultRequest(RESPONSE.OK, CONTENT_TYPE.PLAIN),
 	'/404': () => handleDefaultRequest(RESPONSE.NOT_FOUND, CONTENT_TYPE.PLAIN),
-	'/echo': (_, __, filename) => handleEchoRequest(filename),
+	'/echo': (parsedResult) => handleEchoRequest(parsedResult),
 	'/user-agent': (parsedResult) => handleUserAgentRequest(parsedResult),
-	'/files': (parsedResult, path, filename) => parsedResult.requestLine.includes('POST') 
-	? handleFilePOSTRequests(parsedResult, path, filename) : handleFileGETRequests(_, path, filename),
+	'/files': (parsedResult) => parsedResult.METHOD === "POST"
+	? handleFilePOSTRequests(parsedResult) : handleFileGETRequests(parsedResult),
 };

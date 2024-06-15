@@ -1,19 +1,18 @@
 import { RESPONSE, CONTENT_TYPE } from "./utils.js";
 import fs from "fs";
 
-export function handleFileGETRequests(path, filename) {
-	if (!fs.existsSync(`${path}/${filename}`)) {
+export function handleFileGETRequests(parsedResult) {
+	if (!fs.existsSync(`${parsedResult.PATH}/${parsedResult.FILENAME}`)) {
 		return `HTTP/1.1 ${RESPONSE.NOT_FOUND}\r\n\r\n`;
 	}
-
-	const content = fs.readFileSync(`${path}/${filename}`).toString();
+	const content = fs.readFileSync(`${parsedResult.PATH}/${parsedResult.FILENAME}`).toString();
 	return `HTTP/1.1 ${RESPONSE.OK}\r\nContent-Type: ${CONTENT_TYPE.APP}\r\nContent-Length: ${content.length}\r\n\r\n${content}\r\n`;
 }
 
-export function handleFilePOSTRequests(parsedResult, path, filename) {
+export function handleFilePOSTRequests(parsedResult) {
 	try {
-		const body = parsedResult.body;
-		fs.writeFileSync(`${path}/${filename}`, body);
+		const body = parsedResult.headers.body;
+		fs.writeFileSync(`${parsedResult.DIRECTORY}/${parsedResult.FILENAME}`, body);
 		return `HTTP/1.1 ${RESPONSE.CREATED}\r\n\r\n`;
 	} catch (error) {
 		console.error("Error writing file:", error);
@@ -25,7 +24,8 @@ export function handleUserAgentRequest(parsedResult) {
 	return `HTTP/1.1 ${RESPONSE.OK}\r\nContent-Type: ${CONTENT_TYPE.PLAIN}\r\nContent-Length: ${body.length}\r\n\r\n${body}\r\n`;
 } 
 
-export function handleEchoRequest(body) {
+export function handleEchoRequest(parsedResult) {
+	const body = parsedResult.FILENAME;	
 	return `HTTP/1.1 ${RESPONSE.OK}\r\nContent-Type: ${CONTENT_TYPE.PLAIN}\r\nContent-Length: ${body.length}\r\n\r\n${body}\r\n`;
 }
 

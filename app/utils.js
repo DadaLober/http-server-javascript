@@ -1,4 +1,5 @@
 import {routes} from "./router.js";
+import process from "process";
 
 export const RESPONSE = {
     OK : "200 OK",
@@ -15,8 +16,10 @@ export function parseHeaders(data) {
 	const lines = data.toString().split("\r\n");
 
 	// Extract request line and body
-	const rawRequestLine = lines.shift();
-	const requestLine = rawRequestLine.split(" ");
+	const requestLine = lines.shift().split(" ");
+	const METHOD = requestLine[0];
+	const [_, PATH, FILENAME] = requestLine[1].split("/");
+	const DIRECTORY = process.argv[3];
 	const body = lines.pop();
 
 	// Create headers object
@@ -24,16 +27,14 @@ export function parseHeaders(data) {
 		const [key, value] = element.split(" ");
 		headers[key.replace(/[':]/, "")] = value;
 	});
+	headers.body = body;
 
-	const response = {requestLine, headers, body};
-	return response;
+	return {METHOD, DIRECTORY, PATH, FILENAME, headers};
 }
-export function handleRequests(parsedResult) {
-	const [_, path, filename] = parsedResult.requestLine[1].split("/");
-
+export function handleRoutes(parsedResult) {
 	// handle routes
-	// console.log(parsedResult, path, filename);
-	const handler = routes[`/${path}`];
-	const response = handler ? handler(parsedResult, path, filename) : routes["/404"]();
+	console.log(parsedResult);
+	const handler = routes[`/${parsedResult.PATH}`];
+	const response = handler ? handler(parsedResult) : routes["/404"]();
 	return response;
 }
