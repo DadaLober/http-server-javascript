@@ -5,10 +5,6 @@ const handleSocketClose = (socket) => {
 	socket.end();
 };
 
-/**
- * @param {Object} socket - The socket object representing the connection.
- * @param {Buffer} data - The data received from the client.
- */
 const handleSocketData = (socket, data) => {
 	try {
 		const parsedResult = parseHeaders(data);

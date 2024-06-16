@@ -15,10 +15,7 @@ export const CONTENT_TYPE = {
 export const ENCODING = {
 	GZIP : "Content-Encoding: gzip\r\n",
 };
-/**
- * @param {Buffer|string}
- * @returns {Object} parsedResult - An object containing headers info.
- */
+
 export function parseHeaders(data) {
 	const headers = {};
 	const lines = data.toString().split("\r\n");
@@ -40,10 +37,6 @@ export function parseHeaders(data) {
 	return {METHOD, DIRECTORY, PATH, FILENAME, headers};
 }
 
-/**
- * @param {Object} parsedResult
- * @return {string} The response from the appropriate handler.
- */
 export function handleRoutes(parsedResult) {
 	const handler = routes[`/${parsedResult.PATH}`];
 	const response = handler ? handler(parsedResult) : routes["/404"]();

@@ -1,10 +1,6 @@
 import { RESPONSE, CONTENT_TYPE, ENCODING } from "./utils.js";
 import fs from "fs";
 
-/**
- * @param {Object} parsedResult
- * @returns {string} server response
- */
 export function handleFileGETRequests(parsedResult) {
 	if (!fs.existsSync(`${parsedResult.DIRECTORY}/${parsedResult.FILENAME}`)) {
 		return RESPONSE.NOT_FOUND;
