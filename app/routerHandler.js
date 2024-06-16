@@ -21,7 +21,7 @@ export function handleFilePOSTRequests(parsedResult) {
 
 export function handleUserAgentRequest(parsedResult) {
 	const body = parsedResult.headers["User-Agent"];
-	return `${RESPONSE.OK}${CONTENT_TYPE.PLAIN}	Content-Length: ${body.length}\r\n\r\n${body}\r\n`;
+	return `${RESPONSE.OK}${CONTENT_TYPE.PLAIN}Content-Length: ${body.length}\r\n\r\n${body}\r\n`;
 } 
 
 export function handleEchoRequest(parsedResult) {
