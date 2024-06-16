@@ -33,5 +33,5 @@ export function handleEchoRequest(parsedResult) {
 }
 
 export function handleDefaultRequest(statusCode, contentType) {
-	return `HTTP/1.1 ${statusCode}\r\nContent-Type: ${contentType}\r\n\r\n`;
+	return `${statusCode}Content-Type: ${contentType}\r\n`;
 }
