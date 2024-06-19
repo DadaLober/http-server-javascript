@@ -29,8 +29,8 @@ export function parseHeaders(data) {
 
 	// Create headers object
 	lines.forEach(element => {
-		const [key, value] = element.split(" ");
-		headers[key.replace(/[':]/, "")] = value;
+		const [key, value] = element.split(": ");
+		headers[key] = value;
 	});
 	headers.body = body;
 
@@ -38,6 +38,7 @@ export function parseHeaders(data) {
 }
 
 export function handleRoutes(parsedResult) {
+	console.log(parsedResult);
 	const handler = routes[`/${parsedResult.PATH}`];
 	const response = handler ? handler(parsedResult) : routes["/404"]();
 	return response;
