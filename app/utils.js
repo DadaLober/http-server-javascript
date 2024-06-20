@@ -38,7 +38,6 @@ export function parseHeaders(data) {
 }
 
 export function handleRoutes(parsedResult) {
-	console.log(parsedResult);
 	const handler = routes[`/${parsedResult.PATH}`];
 	const response = handler ? handler(parsedResult) : routes["/404"]();
 	return response;
