@@ -26,10 +26,11 @@ export function handleUserAgentRequest(parsedResult) {
 
 export function handleEchoRequest(parsedResult) {
 	const body = parsedResult.FILENAME;	
-	if (parsedResult.headers["Accept-Encoding"].includes("gzip")) {
-		return `${RESPONSE.OK}${ENCODING.GZIP}${CONTENT_TYPE.PLAIN}Content-Length: ${body.length}\r\n\r\n${body}\r\n`;
-	}
-	return `${RESPONSE.OK}${CONTENT_TYPE.PLAIN}Content-Length: ${body.length}\r\n\r\n${body}\r\n`;
+	const encoding = parsedResult.headers["Accept-Encoding"];
+	if (!encoding || !encoding.includes("gzip")) {
+		return `${RESPONSE.OK}${CONTENT_TYPE.PLAIN}Content-Length: ${body.length}\r\n\r\n${body}\r\n`;
+	} 	
+	return `${RESPONSE.OK}${ENCODING.GZIP}${CONTENT_TYPE.PLAIN}Content-Length: ${body.length}\r\n\r\n${body}\r\n`;
 }
 
 export function handleDefaultRequest(statusCode, contentType) {
