@@ -1,9 +1,6 @@
 import { parseHeaders, handleRoutes } from "./utils.js";
 import net from "net";
 
-const handleSocketClose = (socket) => {
-	socket.end();
-};
 
 const handleSocketData = (socket, data) => {
 	try {
