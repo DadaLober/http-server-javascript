@@ -31,9 +31,9 @@ export function handleEchoRequest(parsedResult) {
 	if (!encoding || !encoding.includes("gzip")) {
 		return `${RESPONSE.OK}${CONTENT_TYPE.PLAIN}Content-Length: ${body.length}\r\n\r\n${body}\r\n`;
 	} 	
-
 	const gzip = zlib.gzipSync(body);
-	return `${RESPONSE.OK}${ENCODING.GZIP}${CONTENT_TYPE.PLAIN}Content-Length: ${gzip.length}\r\n\r\n${gzip}\r\n`;
+	const gzipLength = gzip.length;
+	return `${RESPONSE.OK}${ENCODING.GZIP}${CONTENT_TYPE.PLAIN}Content-Length: ${gzipLength}\r\n\r\n${gzip}\r\n`;
 }
 
 export function handleDefaultRequest(statusCode, contentType) {
