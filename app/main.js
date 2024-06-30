@@ -14,6 +14,10 @@ const handleSocketData = (socket, data) => {
 	}
 };
 
+const handleSocketClose = (socket) => {
+	console.log(`Client disconnected`);
+};
+
 const server = net.createServer((socket) => {
 	socket.on("close", () => handleSocketClose(socket));
 	socket.on("data", (data) => handleSocketData(socket, data));

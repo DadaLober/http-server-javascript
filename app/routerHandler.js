@@ -26,14 +26,15 @@ export function handleUserAgentRequest(parsedResult) {
 } 
 
 export function handleEchoRequest(parsedResult) {
-	const body = parsedResult.headers.body;	
+	console.log(parsedResult);
+	const body = parsedResult.FILENAME;	
 	const encoding = parsedResult.headers["Accept-Encoding"];
 	if (!encoding || !encoding.includes("gzip")) {
 		return `${RESPONSE.OK}${CONTENT_TYPE.PLAIN}Content-Length: ${body.length}\r\n\r\n${body}\r\n`;
 	} 	
 	const gzip = zlib.gzipSync(body);
 	const gzipLength = gzip.length;
-	return `${RESPONSE.OK}${ENCODING.GZIP}${CONTENT_TYPE.PLAIN}Content-Length: ${gzipLength}\r\n\r\n${gzip}\r\n`;
+	return `${RESPONSE.OK}${ENCODING.GZIP}${CONTENT_TYPE.PLAIN}Content-Length: ${gzipLength}\r\n\r\n${gzip}`;
 }
 
 export function handleDefaultRequest(statusCode, contentType) {
