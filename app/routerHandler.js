@@ -14,7 +14,7 @@ export function handleFilePOSTRequests(parsedResult) {
 	try {
 		const body = parsedResult.headers.body;
 		fs.writeFileSync(`${parsedResult.DIRECTORY}/${parsedResult.FILENAME}`, body);
-		return RESPONSE.CREATED;
+		return [RESPONSE.CREATED];
 	} catch (error) {
 		console.error("Error writing file:", error);
 	}
