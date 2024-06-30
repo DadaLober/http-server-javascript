@@ -5,8 +5,11 @@ import net from "net";
 const handleSocketData = (socket, data) => {
 	try {
 		const parsedResult = parseHeaders(data);
-		const response = handleRoutes(parsedResult);
+		const [response, buffer] = handleRoutes(parsedResult);
 		socket.write(response);
+		if (buffer) {
+			socket.write(buffer);
+		}
 		socket.end();
 	} catch (error) {
 		console.error("Error handling request:", error);
