@@ -6,6 +6,7 @@ const handleSocketData = (socket, data) => {
 	try {
 		const parsedResult = parseHeaders(data);
 		const [response, buffer] = handleRoutes(parsedResult);
+		console.log(response);
 		socket.write(response);
 		if (buffer) {
 			socket.write(buffer);
