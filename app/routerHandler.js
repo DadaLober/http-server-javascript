@@ -4,7 +4,7 @@ import zlib from "zlib";
 
 export function handleFileGETRequests(parsedResult) {
 	if (!fs.existsSync(`${parsedResult.DIRECTORY}/${parsedResult.FILENAME}`)) {
-		return RESPONSE.NOT_FOUND;
+		return [RESPONSE.NOT_FOUND];
 	}
 	const content = fs.readFileSync(`${parsedResult.DIRECTORY}/${parsedResult.FILENAME}`).toString();
 	return [`${RESPONSE.OK}${CONTENT_TYPE.APP}Content-Length: ${content.length}\r\n\r\n${content}\r\n`];
