@@ -7,6 +7,7 @@ const handleSocketData = (socket, data) => {
 		const parsedResult = parseHeaders(data);
 		const response = handleRoutes(parsedResult);
 		socket.write(response);
+		socket.end();
 	} catch (error) {
 		console.error("Error handling request:", error);
 		socket.end();
