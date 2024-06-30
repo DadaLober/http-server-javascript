@@ -7,7 +7,7 @@ export function handleFileGETRequests(parsedResult) {
 		return RESPONSE.NOT_FOUND;
 	}
 	const content = fs.readFileSync(`${parsedResult.DIRECTORY}/${parsedResult.FILENAME}`).toString();
-	return `${RESPONSE.OK}${CONTENT_TYPE.APP}Content-Length: ${content.length}\r\n\r\n${content}\r\n`;
+	return [`${RESPONSE.OK}${CONTENT_TYPE.APP}Content-Length: ${content.length}\r\n\r\n${content}\r\n`];
 }
 
 export function handleFilePOSTRequests(parsedResult) {
@@ -22,7 +22,7 @@ export function handleFilePOSTRequests(parsedResult) {
 
 export function handleUserAgentRequest(parsedResult) {
 	const body = parsedResult.headers["User-Agent"];
-	return `${RESPONSE.OK}${CONTENT_TYPE.PLAIN}Content-Length: ${body.length}\r\n\r\n${body}\r\n`;
+	return [`${RESPONSE.OK}${CONTENT_TYPE.PLAIN}Content-Length: ${body.length}\r\n\r\n${body}\r\n`];
 } 
 
 export function handleEchoRequest(parsedResult) {
@@ -36,10 +36,10 @@ export function handleEchoRequest(parsedResult) {
         return [`${RESPONSE.OK}${ENCODING.GZIP}${CONTENT_TYPE.PLAIN}Content-Length: ${gzip.length}\r\n\r\n`, gzip];
     } catch (error) {
         console.error("Error compressing data:", error);
-        return `${RESPONSE.NOT_FOUND}${CONTENT_TYPE.PLAIN}`;
+        return [`${RESPONSE.NOT_FOUND}${CONTENT_TYPE.PLAIN}`];
     }
 }
 
 export function handleDefaultRequest(statusCode, contentType) {
-	return `${statusCode}Content-Type: ${contentType}\r\n`;
+	return [`${statusCode}Content-Type: ${contentType}\r\n`];
 }
