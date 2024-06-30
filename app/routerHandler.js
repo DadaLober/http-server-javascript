@@ -26,7 +26,7 @@ export function handleUserAgentRequest(parsedResult) {
 } 
 
 export function handleEchoRequest(parsedResult) {
-	const body = parsedResult.FILENAME;	
+	const body = parsedResult.headers.body;	
 	const encoding = parsedResult.headers["Accept-Encoding"];
 	if (!encoding || !encoding.includes("gzip")) {
 		return `${RESPONSE.OK}${CONTENT_TYPE.PLAIN}Content-Length: ${body.length}\r\n\r\n${body}\r\n`;
