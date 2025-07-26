@@ -26,7 +26,8 @@ http-server/
 ├── package.json          # Node.js dependencies and scripts
 ├── package-lock.json
 ├── your_server.sh        # Server startup script
-├── utput
+├── setup.sh              # Automated setup script
+├── test.sh               # Automated test suite script
 └── README.md             # This file
 ```
 
