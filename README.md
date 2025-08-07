@@ -1,6 +1,6 @@
 # HTTP/1.1 Server
 
-A lightweight, custom HTTP/1.1 server built from scratch in Node.js using raw TCP sockets. This server demonstrates fundamental web protocol implementation without relying on high-level HTTP frameworks.
+A lightweight, custom HTTP/1.1 server built from scratch in Node.js using raw TCP sockets, demonstrates fundamental web protocol implementation without relying on high-level HTTP frameworks.
 
 ### Quick Setup
 
@@ -13,39 +13,39 @@ git clone https://github.com/DadaLober/http-server-javascript.git && cd http-ser
 ```
 http-server/
 ├── app/
-│   ├── main.js           # entry point
-│   ├── utils.js          # HTTP parsing utilities and route handling
-│   ├── router.js         # Route definitions and mapping
-│   └── routerHandler.js  # Individual route handler implementations
+│   ├── main.js           # Entry point
+│   ├── utils.js          # HTTP parsing and route handling
+│   ├── router.js         # Route definitions
+│   └── routerHandler.js  # Route handlers
 ├── tmp/
 │   ├── foo
 │   └── readme.txt
 ├── .gitattributes
 ├── .gitignore
 ├── codecrafters.yml
-├── package.json          # Node.js dependencies and scripts
+├── package.json          # Dependencies and scripts
 ├── package-lock.json
 ├── your_server.sh        # Server startup script
-├── setup.sh              # Automated setup script
-├── test.sh               # Automated test suite script
+├── setup.sh              # Setup script
+├── test.sh               # Test script
 └── README.md             # This file
 ```
 
-## Key Features
+## Features
 
--   **Raw TCP Implementation** - Built from scratch using Node.js TCP sockets without HTTP frameworks
--   **HTTP/1.1 Compliance** - Proper request parsing, header handling, and response generation
--   **File Operations** - GET/POST file serving and uploads with directory-based storage
--   **GZIP Compression** - Content encoding support with proper headers
--   **Modular Architecture** - Clean separation with dedicated routing and handler modules
+- Built with raw TCP sockets (no frameworks)
+- HTTP/1.1 request/response handling
+- File serving and uploads
+- GZIP compression support
+- Clean modular structure
 
 ## Technologies Used
 
--   **Node.js** (TCP server implementation, file system operations)
--   **JavaScript ES6+** (modern syntax, import/export modules)
--   **HTTP/1.1 Protocol** (custom implementation without frameworks)
--   **TCP Sockets** (raw network communication)
--   **GZIP Compression** (data compression for responses)
+-   Node.js
+-   JavaScript
+-   HTTP/1.1 Protocol
+-   TCP Sockets
+-   GZIP Compression
 
 ## Getting Started
 
@@ -92,16 +92,15 @@ http-server/
     curl http://localhost:4221/files/readme.txt
     ```
 
-### Automated Test Suite
+## Testing
 
-The project includes a comprehensive test suite that validates:
-
--   **Connection handling** - TCP socket connections and disconnections
--   **HTTP parsing** - Request headers, methods, and body parsing
--   **Route functionality** - All endpoints (/, /echo, /user-agent, /files)
--   **File operations** - GET/POST file handling with various file types
--   **Compression** - GZIP encoding with different Accept-Encoding headers
--   **Error handling** - 404 responses and malformed requests
+Includes tests for:
+- TCP connections
+- HTTP parsing
+- Route functionality
+- File operations
+- GZIP compression
+- Error handling
 
 **Sample test output:**
 
@@ -114,7 +113,6 @@ The project includes a comprehensive test suite that validates:
 ✓ File GET operations
 ✓ File POST operations
 ✓ 404 handling for unknown routes
-✓ Malformed request handling
 
 All tests passed! 🎉
 ```
